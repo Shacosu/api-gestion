@@ -4,7 +4,7 @@ const Games = require("../model/gamesModel");
 
 module.exports = {
     getGames: asyncHandler(async (req, res) => {
-            const games = await Games.find({}).populate('category');       
+            const games = await Games.find().populate('category');       
             if (!games || games.length === 0) return res.status(500).send({ statusCode: 500, message: "No se encontraron juegos disponibles."});
             return res.send(games);
     }),
