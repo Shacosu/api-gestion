@@ -10,6 +10,7 @@ app.use(express.json());
 app.use(cors());
 app.use(morgan("dev"))
 
+app.get("/api", (req, res) => res.send("Hello World!"));
 app.use("/api/collection", require("./routes/collectionRoutes"));
 app.use("/api/games", require("./routes/gamesRoutes"));
 app.use("/api/scrap", require("./routes/scrapRoutes"));

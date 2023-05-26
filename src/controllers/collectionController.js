@@ -18,7 +18,4 @@ module.exports = {
             data: collection
         });
     }),
-    createCategory: asyncHandler(async (req, res) => {
-        console.log("hola");
-    }),
 }

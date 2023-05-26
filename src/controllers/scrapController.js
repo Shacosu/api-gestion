@@ -12,10 +12,9 @@ require("colors")
 
 module.exports = {
   addLink: asyncHandler(async (req, res) => {
-    const verify = await Link.find({ link: req.params.link });
-    if (verify.length > 0) return res.status(409).json({ status: 409, message: "El link ingresado ya se encuentra en la BDD" });
-    const { link: scrapLink } = req.body;
     const link = new Link(req.body);
+    const verify = await Link.find({ link: req.body.link });
+    if (verify.length > 0) return res.status(409).json({ status: 409, message: "El link ingresado ya se encuentra en la BDD" });
     if (!link) return res.status(500).send({ message: 'Ha ocurrido un error o se han ingresado mal los campos.' });
     await link.save();
     res.send({
@@ -29,6 +28,7 @@ module.exports = {
       maxConcurrency: 5,
       puppeteerOptions: {
         headless: true,
+        defaultViewport: null,
       },
       timeout: 7000000,
     });
@@ -111,7 +111,46 @@ module.exports = {
           }
 
         }
-      }, { page: 2, priority: 2, taskId: 2 }) // cambiar a 2
+      }, { page: 2, priority: 2, taskId: 2 }),
+
+      cluster.queue(async ({ page }) => {
+        console.log('Trabajando con eneba.com'.yellow);
+        const gamesList = await Link.find({ "link": { $regex: "eneba.com" } });
+        const validateList = await Games.find({ "provider": { $regex: "eneba.com" } });
+        const { data } = await axios.get("https://mindicador.cl/api/euro");
+        const euroActualPrice = data.serie[0].valor || 870;
+        for (const gameItem of gamesList) {
+          const { link: game, category } = gameItem;
+          try {
+            console.log("Link:", game)
+            await page.goto(game, { waitUntil: 'networkidle2' });
+            const html = await page.content();
+            const $ = cheerio.load(html);
+            const priceSelector = "#app > main > div > div > div > div > div > div > ul > li:nth-child(1) > div > div > div > div:nth-child(1) > div > span > span:first-of-type"
+            const validate = validateList.some(x => x.url === game);
+            const price = $(priceSelector).text().trim().replace(",", ".").replace("€", "");
+            if (!validate) {
+              const gameInfo = {
+                title: $("main > div > div> div> div > div > div > div > h1").text().trim(),
+                price: (Number(price) * euroActualPrice).toFixed(0),
+                image: $("#app > main > div > div > div > div > div > img").attr('src'),
+                description: $('#app > main > div > div > div > div > div > div:nth-child(10) > div').text().trim(),
+                provider: new URL(game).hostname || "Sin proveedor",
+                discount: $("#descuento-tag").text() || "0%",
+                url: game,
+                category
+              }
+              const savedGame = new Games(gameInfo);
+              await savedGame.save();
+            } else {
+              await Games.findOneAndUpdate({ url: { $regex: game } }, { price: (Number(price) * euroActualPrice).toFixed(0) });
+            }
+          } catch (error) {
+            console.log(error.message)
+          }
+
+        }
+      }, { page: 3, priority: 3, taskId: 3 })
 
     ]);
 

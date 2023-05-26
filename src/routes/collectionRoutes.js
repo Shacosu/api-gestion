@@ -7,7 +7,5 @@ router.route("/")
     .get(getCollections)
     .post(createCollection)
 
-// router.route("/category").post(createCategory)
-
 
 module.exports = router;
