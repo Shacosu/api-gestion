@@ -29,6 +29,7 @@ module.exports = {
       puppeteerOptions: {
         headless: true,
         defaultViewport: null,
+        args: ["-no--sandbox"]
       },
       timeout: 7000000,
     });
