@@ -129,9 +129,8 @@ module.exports = {
             await page.goto(game, { waitUntil: 'networkidle2' });
             const html = await page.content();
             const $ = cheerio.load(html);
-            const priceSelector = "#app > main > div > div > div > div > div > div > ul > li:nth-child(1) > div > div > div > div:nth-child(1) > div > span > span:first-of-type"
+            const price = $('meta[property="product:price:amount"]').attr('content')
             const validate = validateList.some(x => x.url === game);
-            const price = $(priceSelector).text().trim().replace(",", ".").replace("€", "");
             if (!validate) {
               const gameInfo = {
                 title: $("main > div > div> div> div > div > div > div > h1").text().trim(),
