@@ -29,7 +29,7 @@ module.exports = {
       puppeteerOptions: {
         headless: true,
         defaultViewport: null,
-        args: ["-no--sandbox"]
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
       },
       timeout: 7000000,
     });
