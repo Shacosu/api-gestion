@@ -128,7 +128,7 @@ module.exports = {
           const { link: game, category } = gameItem;
           try {
             console.log("Link:", game)
-            await page.goto(game, { waitUntil: 'DOMContentLoaded' });
+            await page.goto(game, { waitUntil: 'domcontentloaded' });
             const html = await page.content();
             const $ = cheerio.load(html);
             const price = $('meta[property="product:price:amount"]').attr('content');
