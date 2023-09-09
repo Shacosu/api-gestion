@@ -120,7 +120,9 @@ module.exports = {
         console.log('Trabajando con eneba.com'.yellow);
         const gamesList = await Link.find({ "link": { $regex: "eneba.com" } });
         const validateList = await Games.find({ "provider": { $regex: "eneba.com" } });
-        const { data } = await axios.get("https://mindicador.cl/api/euro");
+        const { data } = await axios.get("https://mindicador.cl/api/euro", {
+          timeout: 10000,
+        });
         const euroActualPrice = Math.round(data.serie[0].valor) || 870;
         for (const gameItem of gamesList) {
           const { link: game, category } = gameItem;
@@ -129,10 +131,10 @@ module.exports = {
             await page.goto(game, { waitUntil: 'networkidle2' });
             const html = await page.content();
             const $ = cheerio.load(html);
-            const meta = JSON.parse($('script[data-rh="true"][type="application/ld+json"]').html());
-            const price = meta.offers.lowPrice;
-            const image = meta.image;
-            // console.log("Precio:", price)
+            const price = $('meta[property="product:price:amount"]').attr('content');
+            const image = $('meta[property="og:image"]').attr('content');
+            console.log("Imagen:", image)
+            console.log("Precio:", price)
             const validate = validateList.some(x => x.url === game);
             if (!validate) {
               const gameInfo = {
