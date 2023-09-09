@@ -129,9 +129,10 @@ module.exports = {
             await page.goto(game, { waitUntil: 'networkidle2' });
             const html = await page.content();
             const $ = cheerio.load(html);
-            const meta = JSON.parse($('script[type="application/ld+json"]').html());
+            const meta = JSON.parse($('script[data-rh="true"][type="application/ld+json"]').html());
             const price = meta.offers.lowPrice;
             const image = meta.image;
+            console.log("Precio:", price)
             const validate = validateList.some(x => x.url === game);
             if (!validate) {
               const gameInfo = {
