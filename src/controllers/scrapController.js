@@ -132,7 +132,7 @@ module.exports = {
             const meta = JSON.parse($('script[data-rh="true"][type="application/ld+json"]').html());
             const price = meta.offers.lowPrice;
             const image = meta.image;
-            console.log("Precio:", price)
+            // console.log("Precio:", price)
             const validate = validateList.some(x => x.url === game);
             if (!validate) {
               const gameInfo = {
