@@ -131,6 +131,7 @@ module.exports = {
             await page.goto(game, { waitUntil: 'load' });
             const html = await page.content();
             const $ = cheerio.load(html);
+            console.log(html)
             const price = $('meta[property="product:price:amount"]').attr('content');
             const image = $('meta[property="og:image"]').attr('content');
             console.log("Imagen:", image)
