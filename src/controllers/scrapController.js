@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
-
+const puppeteer = require("puppeteer-extra");
+const StealthPlugin = require('puppeteer-extra-plugin-stealth')
 const Link = require("../model/scrapModel");
 const Games = require("../model/gamesModel");
 
@@ -7,6 +8,8 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 
 const { Cluster } = require("puppeteer-cluster");
+
+puppeteer.use(StealthPlugin());
 
 require("colors")
 
@@ -31,6 +34,7 @@ module.exports = {
         defaultViewport: null,
         args: ['--no-sandbox', '--disable-setuid-sandbox']
       },
+      puppeteer: puppeteer,
       timeout: 7000000,
     });
 
@@ -129,7 +133,7 @@ module.exports = {
           try {
             console.log("Link:", game)
             await page.goto(game);
-            await page.waitForSelector('#app > header > div.VZWwFk > a > img', { timeout: 10000 });
+            await page.waitForSelector('#app > header > div.VZWwFk > a > img', { timeout: 15000 });
             const html = await page.content();
             const $ = cheerio.load(html);
             console.log(html)
