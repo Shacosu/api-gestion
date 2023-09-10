@@ -132,8 +132,7 @@ module.exports = {
           const { link: game, category } = gameItem;
           try {
             console.log("Link:", game)
-            await page.goto(game);
-            await page.waitForSelector('#app > header > div.VZWwFk > a > img', { timeout: 15000 });
+            await page.goto(game, { waitUntil: 'load', timeout: 15000 });
             const html = await page.content();
             const $ = cheerio.load(html);
             console.log(html)
