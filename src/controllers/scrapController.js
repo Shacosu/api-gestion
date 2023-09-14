@@ -30,7 +30,7 @@ module.exports = {
       concurrency: Cluster.CONCURRENCY_CONTEXT,
       maxConcurrency: 5,
       puppeteerOptions: {
-        headless: false,
+        headless: true,
         defaultViewport: null,
         args: ['--no-sandbox', '--disable-setuid-sandbox'],
         browserWSEndpoint: 'wss://chrome.browserless.io?token=e10f3fe2-94ca-4523-8d8b-5ddaa03786eb'
