@@ -134,6 +134,9 @@ module.exports = {
           try {
             console.log("Link:", game)
             await page.goto(game, { waitUntil: 'networkidle2', timeout: 15000 });
+            if (await page.$('#challenge-running') !== null) {
+              await page.waitForSelector('#challenge-running', { hidden: true });
+            }
             const html = await page.content();
             const $ = cheerio.load(html);
             console.log(html)
